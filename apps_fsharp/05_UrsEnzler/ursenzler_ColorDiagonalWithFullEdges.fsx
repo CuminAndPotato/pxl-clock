@@ -1,8 +1,9 @@
-﻿#r "nuget: Pxl, 0.0.11"
+﻿#r "nuget: Pxl, 0.0.18"
 
 open System
 open Pxl
 open Pxl.Ui
+open Pxl.Ui.FSharp
 
 
 
@@ -27,18 +28,10 @@ let time (now: DateTimeOffset) =
             .color (Colors.white)
     }
 
-/// Converts HSV to RGB.
-/// h: Hue in degrees (0-360)
-/// s: Saturation (0.0-1.0)
-/// v: Value (0.0-1.0)
-/// Returns a tuple (R, G, B) where each value is in the range 0-255.
-let hsv (h: float) (s: float) (v: float) =
-    Color.hsv(h, s, v)
-
 let colors =
     [
         for i in 0..29 do
-            hsv (float i * 12.0) 0.7 0.9
+            Color.hsv(float i * 12.0, 0.7, 0.9)
     ]
 
 let lines1 =
@@ -101,12 +94,12 @@ let linesScene minutes (seconds: int) =
             line.p1p2(x1, y1, x2, y2).stroke(color).noAntiAlias()
 
         for i, l in corners1 |> List.mapi (fun i l -> i, l) do
-            let color = hsv 0.0 0.7 (0.7 - float (8 - i) * 0.1)
+            let color = Color.hsv(0.0, 0.7, 0.7 - float (8 - i) * 0.1)
             let x1, y1, x2, y2 = l
             line.p1p2(x1, y1, x2, y2).stroke(color).noAntiAlias()
 
         for i, l in corners2 |> List.mapi (fun i l -> i, l) do
-            let color = hsv 0.0 0.7 (0.7 - float (8 - i) * 0.1)
+            let color = Color.hsv(0.0, 0.7, 0.7 - float (8 - i) * 0.1)
             let x1, y1, x2, y2 = l
             line.p1p2(x1, y1, x2, y2).stroke(color).noAntiAlias()
     }
@@ -117,7 +110,7 @@ let diffuser =
         rect.xywh(0, 08, 24, 7).fill(Color.argb(80, 0, 0, 0)).useAntiAlias()
     }
 
-[<AppV1(name = "Urs Enzler - Color Diagonal With Full Edges")>]
+[<AppFSharpV1(name = "Color Diagonal With Full Edges", includeInCycle = false, author = "Urs Enzler", description = "Color Diagonal With Full Edges")>]
 let all =
     scene {
         let! ctx = getCtx ()

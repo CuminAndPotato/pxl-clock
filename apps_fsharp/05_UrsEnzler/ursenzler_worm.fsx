@@ -1,8 +1,9 @@
-﻿#r "nuget: Pxl, 0.0.11"
+﻿#r "nuget: Pxl, 0.0.18"
 
 open System
 open Pxl
 open Pxl.Ui
+open Pxl.Ui.FSharp
 
 
 let time (now: DateTimeOffset) =
@@ -147,7 +148,7 @@ let diffuser =
             .useAntiAlias ()
     }
 
-[<AppV1(name = "Urs Enzler - Worm")>]
+[<AppFSharpV1(name = "Worm", includeInCycle = false, author = "Urs Enzler", description = "Worm")>]
 let all =
     scene {
         let! ctx = getCtx ()

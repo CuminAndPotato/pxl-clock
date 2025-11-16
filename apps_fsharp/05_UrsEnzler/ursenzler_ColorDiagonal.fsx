@@ -1,8 +1,9 @@
-﻿#r "nuget: Pxl, 0.0.11"
+﻿#r "nuget: Pxl, 0.0.18"
 
 open System
 open Pxl
 open Pxl.Ui
+open Pxl.Ui.FSharp
 
 
 (*
@@ -93,7 +94,7 @@ let diffuser =
         rect.xywh(0, 08, 24, 7).fill(Color.argb(80, 0, 0, 0)).useAntiAlias()
     }
 
-[<AppV1(name = "Urs Enzler - Color Diagonal")>]
+[<AppFSharpV1(name = "Color Diagonal", includeInCycle = false, author = "Urs Enzler", description = "Color Diagonal")>]
 let all =
     scene {
         let! ctx = getCtx ()

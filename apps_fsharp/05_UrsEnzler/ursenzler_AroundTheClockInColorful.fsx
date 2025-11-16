@@ -1,8 +1,9 @@
-﻿#r "nuget: Pxl, 0.0.11"
+﻿#r "nuget: Pxl, 0.0.18"
 
 open System
 open Pxl
 open Pxl.Ui
+open Pxl.Ui.FSharp
 
 
 
@@ -16,19 +17,11 @@ Color optimizations: Nico Enzler
 
 *)
 
-/// Converts HSV to RGB.
-/// h: Hue in degrees (0-360)
-/// s: Saturation (0.0-1.0)
-/// v: Value (0.0-1.0)
-/// Returns a tuple (R, G, B) where each value is in the range 0-255.
-let hsv (h: float) (s: float) (v: float) =
-    Color.hsv(h, s, v)
-
 let time hour minute =
     scene {
         let! ctx = getCtx ()
         let timeText =
-            text.var4x5($"%d{hour}:%02d{minute}").color (hsv 200.0 1.0 1.0)
+            text.var4x5($"%d{hour}:%02d{minute}").color (Color.hsv(200.0, 1.0, 1.0))
 
         let textWidth = timeText.measure ()
         let marginLeft = (ctx.width - textWidth) / 2.0
@@ -44,7 +37,7 @@ let seconds second =
     let getColor s =
         let delta = second - s |> float
         let v = 0.7 * (59.0 - delta) / 60.0 + 0.3
-        hsvToRgb (140.0 + (5.0 * float s)) 1.0 v
+        Color.hsv((140.0 + (5.0 * float s)), 1.0, v)
     scene {
         let seconds = second - 1
         for s in 0..(min 21 seconds) do
@@ -65,7 +58,7 @@ let minutes minutes =
     let getColor s =
         let delta = minutes - s |> float
         let v = 0.7 * (59.0 - delta) / 60.0 + 0.3
-        hsv (240.0 + (5.0 * float s)) 1.0 v
+        Color.hsv((240.0 + (5.0 * float s)), 1.0, v)
     scene {
         let minutes = minutes - 1
         for s in 0..(min 19 minutes) do
@@ -86,7 +79,7 @@ let hours hour =
     let getColor h =
         let delta = hour - h |> float
         let v = 0.8 * (59.0 - delta) / 60.0 + 0.2
-        hsv (40.0 + (15.0 * float h)) 1.0 v
+        Color.hsv((40.0 + (15.0 * float h)), 1.0, v)
     scene {
         let hour = hour - 1
         for s in 0..(min 9 hour) do
@@ -103,7 +96,7 @@ let hours hour =
             pxl.xy(7, 30 - s).stroke(getColor s)
     }
 
-[<AppV1(name = "Urs Enzler - Around The Clock Colorful")>]
+[<AppFSharpV1(name = "Around The Clock Colorful", includeInCycle = false, author = "Urs Enzler", description = "Around The Clock Colorful")>]
 let all =
     scene {
         let! ctx = getCtx ()

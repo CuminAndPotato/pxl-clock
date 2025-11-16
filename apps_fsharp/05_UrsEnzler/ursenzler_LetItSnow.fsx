@@ -1,35 +1,16 @@
-﻿#r "nuget: Pxl, 0.0.11"
+﻿#r "nuget: Pxl, 0.0.18"
 
 open System
 open Pxl
 open Pxl.Ui
+open Pxl.Ui.FSharp
 
 
+let address = "localhost"
+(*
+let address = "192.168.178.52"
+*)
 
-/// Converts HSV to RGB.
-/// h: Hue in degrees (0-360)
-/// s: Saturation (0.0-1.0)
-/// v: Value (0.0-1.0)
-/// Returns a tuple (R, G, B) where each value is in the range 0-255.
-let hsva (h: float) (s: float) (v: float) a =
-    let c = v * s
-    let x = c * (1.0 - abs ((h / 60.0) % 2.0 - 1.0))
-    let m = v - c
-
-    let r', g', b' =
-        if h < 60.0 then c, x, 0.0
-        elif h < 120.0 then x, c, 0.0
-        elif h < 180.0 then 0.0, c, x
-        elif h < 240.0 then 0.0, x, c
-        elif h < 300.0 then x, 0.0, c
-        else c, 0.0, x
-
-    let a = a * 255.0 |> int
-    let r = (r' + m) * 255.0 |> int
-    let g = (g' + m) * 255.0 |> int
-    let b = (b' + m) * 255.0 |> int
-
-    Color.argb(a, r, g, b)
 
 let numbers =
     [
@@ -111,7 +92,7 @@ let time (now: DateTimeOffset) =
             .var4x5($"{now:HH}:{now:mm}")
             .color(Colors.white)
             .xy(1, 19)
-            .color(hsva 222 0.6 0.8 1)
+            .color(Color.hsva(222, 0.6, 0.8, 1))
     }
 
 type Snowflake = Falling | Lying | Ice | Empty
@@ -187,10 +168,10 @@ let getNext (world: World): World=
         nextWorld[i] <- state
     nextWorld
 
-let snowflake = hsva 0 0 1 1
-let empty = hsva 200 0.8 0.1 1.0
-let ice = hsva 222 0.6 0.8 1.0
-let getSnowColor snowHeight = hsva 220 (0.1 + float snowHeight * 0.025) 1.0 1.0
+let snowflake = Color.hsva(0, 0, 1, 1)
+let empty = Color.hsva(200, 0.8, 0.1, 1.0)
+let ice = Color.hsva(222, 0.6, 0.8, 1.0)
+let getSnowColor snowHeight = Color.hsva(220, (0.1 + float snowHeight * 0.025), 1.0, 1.0)
 
 let getSnowHeight (world: World) c r =
     [0..r]
@@ -234,7 +215,7 @@ let snowing =
         |> pxls.set
     }
 
-[<AppV1(name = "Urs Enzler - Let It Snow")>]
+[<AppFSharpV1(name = "Let It Snow", includeInCycle = false, author = "Urs Enzler", description = "Let It Snow")>]
 let all =
     scene {
         let! ctx = getCtx ()
@@ -243,9 +224,10 @@ let all =
     }
 
 
-all |> Simulator.start "localhost"
+all |> Simulator.start address
 
 (*
 Simulator.stop ()
 *)
+
 

@@ -1,4 +1,4 @@
-#r "nuget: Pxl, 0.0.11"
+#r "nuget: Pxl, 0.0.18"
 
 open System
 open Pxl
@@ -76,7 +76,7 @@ mampfHuntingGhosts |> Simulator.start address
 *)
 
 
-[<AppV1(name = "Pizza Mampf", includeInCycle = true, author = "Cumin & Potato", description = "World Famous Pizza Mampf")>]
+[<AppFSharpV1(name = "Pizza Mampf", includeInCycle = true, author = "Cumin & Potato", description = "World Famous Pizza Mampf")>]
 let finalScene =
     scene {
         let! switch = Anim.toggleValues(oneWayAnimationTimeSpan * 2.0, [0; 1], repeat = Repeat.Loop)

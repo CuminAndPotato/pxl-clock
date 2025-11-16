@@ -1,4 +1,4 @@
-#r "nuget: Pxl, 0.0.11"
+#r "nuget: Pxl, 0.0.18"
 
 open System
 open Pxl
@@ -34,7 +34,7 @@ let PXL =
     |]
     |> Array.map float
 
-[<AppV1(name = "InitAnimation")>]
+[<AppFSharpV1(name = "InitAnimation")>]
 let finalScene =
     scene {
         let! hue = useState { Random().NextDouble() * 360.0 }

@@ -1,8 +1,9 @@
-﻿#r "nuget: Pxl, 0.0.11"
+﻿#r "nuget: Pxl, 0.0.18"
 
 open System
 open Pxl
 open Pxl.Ui
+open Pxl.Ui.FSharp
 
 (*
     This clock needs 6 minutes to walk through the whole HSV colour space once.
@@ -27,22 +28,14 @@ module Degrees =
             if abs((a + diff) % 360.0<Degrees> - b) < abs((b + diff) % 360.0<Degrees> - a) then diff, 1
             else diff, -1
 
-/// Converts HSV to RGB.
-/// h: Hue in degrees (0-360)
-/// s: Saturation (0.0-1.0)
-/// v: Value (0.0-1.0)
-/// Returns a tuple (R, G, B) where each value is in the range 0-255.
-let hsva (h: float) (s: float) (v: float) a =
-    { Color.hsv(h, s, v) with a = byte (a * 255.0) }
 
 let time hour minute =
     scene {
-        text.mono4x5($"%02d{hour}").color(hsva 200.0 0.0 1.0 1.0).xy(6, 6)
-        text.mono4x5($"%02d{minute}").color(hsva 200.0 0.0 1.0 1.0).xy(9, 13)
+        text.mono4x5($"%02d{hour}").color(Color.hsva(200.0, 0.0, 1.0, 1.0)).xy(6, 6)
+        text.mono4x5($"%02d{minute}").color(Color.hsva(200.0, 0.0, 1.0, 1.0)).xy(9, 13)
     }
 
-let backgroundColor = hsva 195.0 0.9 0.2 0.4
-
+let backgroundColor = Color.hsva(195.0, 0.9, 0.2, 0.4)
 let seconds minute second =
     let calcColoredPixels colorSeeds =
         let previousAngel, previousDirection = Degrees.getSmallerAngelAndDirection colorSeeds.Previous colorSeeds.Current
@@ -50,26 +43,33 @@ let seconds minute second =
         let previousAngelPerStep = previousAngel / 60.0
         let currentAngelPerStep = currentAngel / 60.0
 
+        let getValue delta =
+            max (1.0 - ((Math.Pow(2.0, Math.Pow(delta, 1.15) / 20.0) - 1.0) / 80.0)) 0.0
+
         let getColor (s: int) step =
             if (s <= second) then
                 let value = (float (colorSeeds.Current + currentAngelPerStep * float s * float currentDirection))
-                hsva
-                    (if value > 0 then value else 360.0 + value)
-                    (1.0 - ((float step) * 0.15))
-                    (1.0 - float (second - s) / 115.0 - step * 0.05)
-                    1
+                Color.hsva(
+                    (if value > 0 then value else 360.0 + value),
+                    1.0 - ((float step) * 0.15),
+                    //(getValue (float (second - s)))
+                    1.0 - float (second - s) / 100.0 - step * 0.05,
+                    1.0
+                )
             else
                 let value = (float (colorSeeds.Previous + previousAngelPerStep * float s * float previousDirection))
-                hsva
-                    (if value > 0 then value else 360.0 + value)
-                    (1.0 - ((float step) * 0.15))
-                    (1.0 - float ((second - s + 60) % 60) / 115.0 - step * 0.05)
-                    1
+                Color.hsva(
+                    (if value > 0 then value else 360.0 + value),
+                    1.0 - ((float step) * 0.15),
+                    //(getValue (float (second - s + 60)))
+                    1.0 - float ((second - s + 60) % 60) / 100.0 - step * 0.05,
+                    1.0
+                )
 
         let pixels = Array.init 576 (fun _ -> backgroundColor)
 
         let set x y color =
-            pixels[x + y * 24] <- color
+            pixels.[x + y * 24] <- color
 
         for s in 0..6 do
             set (12 + s) 4 (getColor s 0)
@@ -233,10 +233,10 @@ let seconds minute second =
         pxls.set(coloredPixels.value)
     }
 
-[<AppV1(name = "Urs Enzler - Colour Wheel Random")>]
+[<AppFSharpV1(name = "Colour Wheel Random", includeInCycle = false, author = "Urs Enzler", description = "Colour Wheel Random")>]
 let all =
     scene {
-        bg.color(hsva 195.0 0.9 0.2 0.4)
+        bg.color(Color.hsva(195.0, 0.9, 0.2, 0.4))
         let! ctx = getCtx ()
         seconds ctx.now.Minute ctx.now.Second
         time ctx.now.Hour ctx.now.Minute

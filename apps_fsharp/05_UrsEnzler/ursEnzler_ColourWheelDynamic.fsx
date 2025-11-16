@@ -1,8 +1,9 @@
-﻿#r "nuget: Pxl, 0.0.11"
+﻿#r "nuget: Pxl, 0.0.18"
 
 open System
 open Pxl
 open Pxl.Ui
+open Pxl.Ui.FSharp
 
 (*
     This clock needs 6 minutes to walk through the whole HSV colour space once.
@@ -12,54 +13,30 @@ open Pxl.Ui
 
 
 
-/// Converts HSV to RGB.
-/// h: Hue in degrees (0-360)
-/// s: Saturation (0.0-1.0)
-/// v: Value (0.0-1.0)
-/// Returns a tuple (R, G, B) where each value is in the range 0-255.
-let hsva (h: float) (s: float) (v: float) a =
-    let h = h % 360.0
-    let c = v * s
-    let x = c * (1.0 - abs ((h / 60.0) % 2.0 - 1.0))
-    let m = v - c
-
-    let r', g', b' =
-        if h < 60.0 then c, x, 0.0
-        elif h < 120.0 then x, c, 0.0
-        elif h < 180.0 then 0.0, c, x
-        elif h < 240.0 then 0.0, x, c
-        elif h < 300.0 then x, 0.0, c
-        else c, 0.0, x
-
-    let a = a * 255.0 |> int
-    let r = (r' + m) * 255.0 |> int
-    let g = (g' + m) * 255.0 |> int
-    let b = (b' + m) * 255.0 |> int
-
-    Color.argb(a, r, g, b)
-
 let time hour minute =
     scene {
-        text.mono4x5($"%02d{hour}").color(hsva 200.0 0.0 1.0 1.0).xy(6, 6)
-        text.mono4x5($"%02d{minute}").color(hsva 200.0 0.0 1.0 1.0).xy(9, 13)
+        text.mono4x5($"%02d{hour}").color(Color.hsva(200.0, 0.0, 1.0, 1.0)).xy(6, 6)
+        text.mono4x5($"%02d{minute}").color(Color.hsva(200.0, 0.0, 1.0, 1.0)).xy(9, 13)
     }
 
-let backgroundColor = hsva 195.0 0.9 0.2 0.4
+let backgroundColor = Color.hsva(195.0, 0.9, 0.2, 0.4)
 
 let seconds minute second =
     let getColor (s: int) step =
         if (s <= second) then
-            hsva
-                (float ((minute * 60) + s))
-                (1.0 - ((float step) * 0.15))
-                (1.0 - float (second - s) / 100.0 - step * 0.05)
-                1
+            Color.hsva(
+                float ((minute * 60) + s),
+                1.0 - ((float step) * 0.15),
+                1.0 - float (second - s) / 100.0 - step * 0.05,
+                1.0
+            )
         else
-            hsva
-                (float ((((minute - 1) % 60) * 60) + s + 1))
-                (1.0 - ((float step) * 0.15))
-                (1.0 - float ((second - s + 60) % 60) / 100.0 - step * 0.05)
-                1
+            Color.hsva(
+                float ((((minute - 1) % 60) * 60) + s + 1),
+                1.0 - ((float step) * 0.15),
+                1.0 - float ((second - s + 60) % 60) / 100.0 - step * 0.05,
+                1.0
+            )
 
     let calcColoredPixels () =
         let pixels = Array.init 576 (fun _ -> backgroundColor)
@@ -223,10 +200,10 @@ let seconds minute second =
         pxls.set(coloredPixels.value)
     }
 
-[<AppV1(name = "Urs Enzler - Colour Wheel Dynamic")>]
+[<AppFSharpV1(name = "Colour Wheel Dynamic", includeInCycle = false, author = "Urs Enzler", description = "Colour Wheel Dynamic")>]
 let all =
     scene {
-        bg.color(hsva 195.0 0.9 0.2 0.4)
+        bg.color(Color.hsva(195.0, 0.9, 0.2, 0.4))
         let! ctx = getCtx ()
         seconds ctx.now.Minute ctx.now.Second
         time ctx.now.Hour ctx.now.Minute

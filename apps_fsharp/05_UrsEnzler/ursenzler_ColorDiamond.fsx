@@ -1,8 +1,9 @@
-﻿#r "nuget: Pxl, 0.0.11"
+﻿#r "nuget: Pxl, 0.0.18"
 
 open System
 open Pxl
 open Pxl.Ui
+open Pxl.Ui.FSharp
 
 
 (*
@@ -16,14 +17,6 @@ Programming: Nico und Urs Enzler
 Color optimizations: Nico Enzler
 
 *)
-
-/// Converts HSV to RGB.
-/// h: Hue in degrees (0-360)
-/// s: Saturation (0.0-1.0)
-/// v: Value (0.0-1.0)
-/// Returns a tuple (R, G, B) where each value is in the range 0-255.
-let hsv (h: float) (s: float) (v: float) =
-    Color.hsv(h, s, v)
 
 let time hour minute =
     scene {
@@ -52,18 +45,18 @@ let lines hour minute second =
                 0.5 + (0.5 * (23.0 - (float hour)) / 9.0)
         let seed = hour * minute * 20 |> float
         for s in 0..(min second 11) do
-            rect.xywh(s, s, 23 - (2*s), 23 - (2*s)).stroke(hsv (seed + float s * 10.0) saturation value).strokeThickness(1).noAntiAlias()
+            rect.xywh(s, s, 23 - (2*s), 23 - (2*s)).stroke(Color.hsv(seed + float s * 10.0, saturation, value)).strokeThickness(1).noAntiAlias()
         for s in 12..(min second 23) do
-            rect.xywh(s, s, 23 - (2*s), 23 - (2*s)).stroke(hsv (seed + float s * 10.0) saturation value).strokeThickness(1).noAntiAlias()
+            rect.xywh(s, s, 23 - (2*s), 23 - (2*s)).stroke(Color.hsv(seed + float s * 10.0, saturation, value)).strokeThickness(1).noAntiAlias()
         for s in 24..(min second 35) do
             let s = s % 24
-            rect.xywh(s, s, 23 - (2*s), 23 - (2*s)).stroke(hsv (seed + (float s + 24.0) * 10.0) saturation value).strokeThickness(1).noAntiAlias()
+            rect.xywh(s, s, 23 - (2*s), 23 - (2*s)).stroke(Color.hsv(seed + (float s + 24.0) * 10.0, saturation, value)).strokeThickness(1).noAntiAlias()
         for s in 36..(min second 47) do
             let s = s % 24
-            rect.xywh(s, s, 23 - (2*s), 23 - (2*s)).stroke(hsv (seed + (float s + 24.0) * 10.0) saturation value).strokeThickness(1).noAntiAlias()
+            rect.xywh(s, s, 23 - (2*s), 23 - (2*s)).stroke(Color.hsv(seed + (float s + 24.0) * 10.0, saturation, value)).strokeThickness(1).noAntiAlias()
         for s in 48..(min second 59) do
             let s = s % 24
-            rect.xywh(s, s, 23 - (2*s), 23 - (2*s)).stroke(hsv (seed + (float s + 48.0) * 10.0) saturation value).strokeThickness(1).noAntiAlias()
+            rect.xywh(s, s, 23 - (2*s), 23 - (2*s)).stroke(Color.hsv(seed + (float s + 48.0) * 10.0, saturation, value)).strokeThickness(1).noAntiAlias()
     }
 
 let hand second =
@@ -137,7 +130,7 @@ let hand second =
                 .useAntiAlias()
     }
 
-[<AppV1(name = "Urs Enzler - Color Diamond")>]
+[<AppFSharpV1(name = "Color Diamond", includeInCycle = false, author = "Urs Enzler", description = "Color Diamond")>]
 let all =
     scene {
         let! ctx = getCtx ()

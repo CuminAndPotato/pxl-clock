@@ -1,8 +1,9 @@
-﻿#r "nuget: Pxl, 0.0.11"
+﻿#r "nuget: Pxl, 0.0.18"
 
 open System
 open Pxl
 open Pxl.Ui
+open Pxl.Ui.FSharp
 
 
 
@@ -16,19 +17,12 @@ Color optimizations: Urs Enzler
 
 *)
 
-/// Converts HSV to RGB.
-/// h: Hue in degrees (0-360)
-/// s: Saturation (0.0-1.0)
-/// v: Value (0.0-1.0)
-/// Returns a tuple (R, G, B) where each value is in the range 0-255.
-let hsv (h: float) (s: float) (v: float) =
-    Color.hsv(h, s, v)
 
 let time hour minute =
     scene {
         let! ctx = getCtx ()
         let timeText =
-            text.var4x5($"%d{hour}:%02d{minute}").color (hsv 200.0 1.0 1.0)
+            text.var4x5($"%d{hour}:%02d{minute}").color (Color.hsva(200.0, 1.0, 1.0, 1.0))
 
         let textWidth = timeText.measure ()
         let marginLeft = (ctx.width - textWidth) / 2.0
@@ -44,7 +38,7 @@ let seconds seconds =
     let getColor s =
         let delta = seconds - s |> float
         let v = 0.8 * (59.0 - delta) / 60.0 + 0.2
-        hsv 190.0 1.0 v
+        Color.hsva(190.0, 1.0, v, 1.0)
     scene {
         let seconds = seconds - 1
         for s in 0..(min 21 seconds) do
@@ -65,7 +59,7 @@ let minutes minutes =
     let getColor m =
         let delta = minutes - m |> float
         let v = 0.8 * (59.0 - delta) / 60.0 + 0.2
-        hsv 200.0 1.0 v
+        Color.hsva(200.0, 1.0, v, 1.0)
     scene {
         let minutes = minutes - 1
         for s in 0..(min 19 minutes) do
@@ -86,7 +80,7 @@ let hours hour =
     let getColor h =
         let delta = hour - h |> float
         let v = 0.8 * (23.0 - delta) / 24.0 + 0.2
-        hsv 210.0 1.0 v
+        Color.hsva(210.0, 1.0, v, 1.0)
     scene {
         let hour = hour - 1
         for s in 0..(min 9 hour) do
@@ -103,10 +97,10 @@ let hours hour =
             pxl.xy(7, 30 - s).stroke(getColor s)
     }
 
-[<AppV1(name = "Urs Enzler - Around The Clock")>]
+[<AppFSharpV1(name = "Around The Clock", includeInCycle = false, author = "Urs Enzler", description = "Around The Clock")>]
 let all =
     scene {
-        bg.color(hsv 195.0 0.9 0.2)
+        bg.color(Color.hsva(195.0, 0.9, 0.2, 1.0))
         let! ctx = getCtx ()
         time ctx.now.Hour ctx.now.Minute
         seconds ctx.now.Second

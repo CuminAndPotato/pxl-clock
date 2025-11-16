@@ -1,18 +1,11 @@
-﻿#r "nuget: Pxl, 0.0.11"
+﻿#r "nuget: Pxl, 0.0.18"
 
 open System
 open Pxl
 open Pxl.Ui
+open Pxl.Ui.FSharp
 
 
-
-/// Converts HSV to RGB.
-/// h: Hue in degrees (0-360)
-/// s: Saturation (0.0-1.0)
-/// v: Value (0.0-1.0)
-/// Returns a tuple (R, G, B) where each value is in the range 0-255.
-let hsv (h: float) (s: float) (v: float) =
-    Color.hsv(h, s, v)
 
 let numbers =
     [
@@ -171,9 +164,9 @@ let getNext (world: World): World=
     nextWorld
 
 let alive =
-    hsv 00 0.8 0.6
+    Color.hsv(0, 0.8, 0.6)
 let empty =
-    hsv 200 0.6 0.2
+    Color.hsv(200, 0.6, 0.2)
 
 let life =
     scene {
@@ -198,7 +191,7 @@ let life =
         world |> Array.map (fun cell -> if cell then alive else empty) |> pxls.set
     }
 
-[<AppV1(name = "Urs Enzler - Game Of Life")>]
+[<AppFSharpV1(name = "Game Of Life", includeInCycle = false, author = "Urs Enzler", description = "Game Of Life")>]
 let all =
     scene {
         let! ctx = getCtx ()

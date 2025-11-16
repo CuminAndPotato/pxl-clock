@@ -1,4 +1,4 @@
-﻿#r "nuget: Pxl, 0.0.11"
+﻿#r "nuget: Pxl, 0.0.18"
 
 open System
 open System.Threading
@@ -102,7 +102,7 @@ let getRandomValueCSharpStyle _ =
     }
 
 
-[<AppV1(name = "Cumin And Potato - Random Number via HTTP")>]
+[<AppFSharpV1(name = "Cumin And Potato - Random Number via HTTP")>]
 let all =
     scene {
         bg.color(Colors.darkBlue)
