@@ -4,12 +4,11 @@ open System.Diagnostics
 open System.Threading
 
 let watchPath = Path.Combine(__SOURCE_DIRECTORY__, "..", "apps_csharp")
-let projectPath = Path.Combine(watchPath, "apps_csharp.csproj")
 
 let mutable currentProcess: Process option = None
 let processLock = obj()
 
-let startDotnetRun () =
+let startDotnetRunForFile (filePath: string) =
     lock processLock (fun () ->
         // Kill existing process if running
         match currentProcess with
@@ -22,11 +21,11 @@ let startDotnetRun () =
                 printfn $"Warning: Error killing process: {ex.Message}"
         | _ -> ()
 
-        // Start new process
-        printfn "Starting dotnet run..."
+        // Start new process with specific file
+        printfn $"Starting dotnet run for file: {filePath}"
         let startInfo = ProcessStartInfo()
         startInfo.FileName <- "dotnet"
-        startInfo.Arguments <- "run"
+        startInfo.Arguments <- $"run \"{filePath}\""
         startInfo.WorkingDirectory <- watchPath
         startInfo.UseShellExecute <- false
         startInfo.RedirectStandardOutput <- true
@@ -52,15 +51,17 @@ let startDotnetRun () =
     )
 
 let mutable lastChangeTime = DateTime.MinValue
+let mutable lastChangedFile = ""
 let debounceMs = 500.0
 
 let onChanged (e: FileSystemEventArgs) =
     // Debounce rapid file changes
     let now = DateTime.Now
-    if (now - lastChangeTime).TotalMilliseconds < debounceMs then
+    if (now - lastChangeTime).TotalMilliseconds < debounceMs && lastChangedFile = e.FullPath then
         ()
     else
         lastChangeTime <- now
+        lastChangedFile <- e.FullPath
         
         let green = "\u001b[32m"
         let reset = "\u001b[0m"
@@ -68,7 +69,7 @@ let onChanged (e: FileSystemEventArgs) =
         printfn $"{green}File changed: {e.FullPath}{reset}"
         printfn $"{green}Restarting...{reset}"
         
-        startDotnetRun()
+        startDotnetRunForFile(e.FullPath)
 
 do
     let w = new FileSystemWatcher(watchPath, "*.cs")
@@ -80,8 +81,7 @@ do
     w.EnableRaisingEvents <- true
 
 printfn $"Watching {watchPath} for C# file changes (Ctrl+C to exit)..."
-printfn "Starting initial dotnet run..."
-startDotnetRun()
+printfn "Waiting for file changes... (No initial run - modify a .cs file to start)"
 
 // Wait for Ctrl+C
 let exitEvent = new ManualResetEvent(false)
