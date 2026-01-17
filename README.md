@@ -18,10 +18,14 @@ We’re excited to see what the community will build around the PXL Clock. Below
 
 ## Quick-Start Development of PXL Clock Apps
 
-**Getting Started:**
-1. Run `./start.sh` in the terminal (or use VSCode task: `PXL :: Start C# (Simulator + C# Watcher)`)
+**Getting Started (3 steps):**
+1. Run `./start.sh` in the terminal
 2. Open the simulator at `http://localhost:5001`
 3. Edit `apps/Program.cs` and save to see changes
+
+> **Windows users:** Use Git Bash, WSL, or run `bash start.sh` in any terminal
+
+**First time?** Don't worry! The start script automatically checks if you have everything installed (.NET SDK 10, VS Code extensions) and provides clear instructions if anything is missing.
 
 **Examples:** Check out the example apps in `apps/Apps/` directory
 
@@ -100,28 +104,6 @@ Just head over to the [**Issues**](../../issues) tab and click **New Issue** to 
 [![NuGet](https://img.shields.io/nuget/v/Pxl.svg?style=flat-square&logo=nuget)](https://www.nuget.org/packages/Pxl)
 [![NuGet Downloads](https://img.shields.io/nuget/dt/Pxl.svg?style=flat-square)](https://www.nuget.org/packages/Pxl)
 
-
-### Prerequisites
-
-- [**.NET 10 SDK**](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)
-- [**Visual Studio Code**](https://code.visualstudio.com/)
-
-
-### Getting Started
-
-1. **Start the simulator:**
-   ```bash
-   ./start.sh
-   ```
-   Or use VSCode task: `Ctrl+Shift+B` → `PXL :: Start C# (Simulator + C# Watcher)`
-
-2. **Open simulator:** Navigate to `http://localhost:5001` in your browser
-
-3. **Edit and code:** Modify `apps/Program.cs` and save to see changes automatically
-
-4. **Examples:** Check out `apps/Apps/` for example applications
-
-
 ### Use Your PXL Clock for Development
 
 1. In the PXL-App, go to the "Settings" tab of your connected PXL Clock, and "Turn Off Display".
@@ -131,9 +113,9 @@ Just head over to the [**Issues**](../../issues) tab and click **New Issue** to 
 3. Start as usual (see above).
 
 
-### Quick API Example
+### Troubleshooting
 
-Look at the example apps located in the `apps/Apps/` directory.
+Run `./build/setup-check.sh` to verify your setup (requires [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0)).
 
 ---
 

@@ -42,8 +42,7 @@ var scene = () =>
         .Brush.Solid(color1);
 };
 
+PXL.Simulate(scene);
+PXL.SendToDevice(scene, "192.168.178.110");
 
-
-
-await PXL.Simulate(scene);
-// await PXL.SendToDevice(scene, "DeviceIP_or_NameInNetwork");
+await Task.Delay(-1);

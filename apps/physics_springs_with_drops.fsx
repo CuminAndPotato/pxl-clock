@@ -1,4 +1,4 @@
-#r "nuget: Pxl, 0.0.34"
+#r "nuget: Pxl, 0.0.39"
 
 open Pxl.Ui.CSharp
 open type Pxl.Ui.CSharp.DrawingContext
